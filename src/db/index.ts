@@ -2,7 +2,7 @@ export class DatabaseManager {
   private static instance: DatabaseManager;
   private db: IDBDatabase | null = null;
   private dbName = 'botDashboard';
-  private dbVersion = 1;
+  private dbVersion = 2;
   private dbReady: Promise<void>;
 
   private constructor() {
@@ -23,7 +23,7 @@ export class DatabaseManager {
     try {
       const store = await this.getStore('messages', 'readwrite');
       return new Promise((resolve, reject) => {
-        const request = store.index('channel_id').getAll(channelId);
+        const request = store.index('channelId').getAll(channelId);
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
       });
@@ -60,10 +60,10 @@ export class DatabaseManager {
 
         // Create messages store
         if (!db.objectStoreNames.contains('messages')) {
-          const messagesStore = db.createObjectStore('messages', { keyPath: 'id' });
+          const messagesStore = db.createObjectStore('messages', { keyPath: 'id', autoIncrement: true });
           messagesStore.createIndex('processed_at', 'processed_at', { unique: false });
           messagesStore.createIndex('status', 'status', { unique: false });
-          messagesStore.createIndex('channel_id', 'channel_id', { unique: false });
+          messagesStore.createIndex('channelId', 'channelId', { unique: false });
         }
 
         // Create users store
