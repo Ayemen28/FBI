@@ -82,9 +82,14 @@ export class DatabaseManager {
   }
 
   private async ensureDbReady() {
-    await this.dbReady;
-    if (!this.db) {
-      throw new Error('Database not initialized');
+    try {
+      await this.dbReady;
+      if (!this.db) {
+        throw new Error('Database not initialized');
+      }
+    } catch (error) {
+      console.error('Database initialization error:', error);
+      throw new Error('فشل في تهيئة قاعدة البيانات');
     }
   }
 
