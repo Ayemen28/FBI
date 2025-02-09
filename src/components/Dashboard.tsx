@@ -445,11 +445,43 @@ export function Dashboard() {
   const { botConfig, messages, todayMessages, updateMessageStats } = useAppStore();
   const location = useLocation();
 
+  const [dbStatus, setDbStatus] = useState({ connected: false, error: '' });
+
   useEffect(() => {
-    const db = DatabaseManager.getInstance();
-    const stats = db.getMessageStats();
-    updateMessageStats(stats.total, stats.today);
-  }, [updateMessageStats]);
+    const checkDatabaseAndData = async () => {
+      const db = DatabaseManager.getInstance();
+      try {
+        const isConnected = await db.checkConnection();
+        setDbStatus({ connected: isConnected, error: '' });
+
+        if (isConnected) {
+          const stats = await db.getMessageStats();
+          updateMessageStats(stats.total, stats.today);
+
+          if (botConfig?.sourceGroup) {
+            const channelData = await db.fetchChannelData(botConfig.sourceGroup);
+            console.log('Channel data loaded:', channelData.length, 'messages');
+          }
+        }
+      } catch (error) {
+        console.error('Error checking database:', error);
+        setDbStatus({ connected: false, error: error.message });
+      }
+    };
+
+    checkDatabaseAndData();
+  }, [updateMessageStats, botConfig]);
+
+  if (!dbStatus.connected) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-2">خطأ في الاتصال بقاعدة البيانات</p>
+          <p className="text-gray-600">{dbStatus.error || 'يرجى التحقق من إعدادات قاعدة البيانات'}</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!botConfig) {
     return (

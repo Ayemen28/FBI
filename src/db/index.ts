@@ -9,6 +9,30 @@ export class DatabaseManager {
     this.dbReady = this.initializeDatabase();
   }
 
+  public async checkConnection(): Promise<boolean> {
+    try {
+      await this.ensureDbReady();
+      return true;
+    } catch (error) {
+      console.error('Database connection error:', error);
+      return false;
+    }
+  }
+
+  public async fetchChannelData(channelId: string) {
+    try {
+      const store = await this.getStore('messages', 'readwrite');
+      return new Promise((resolve, reject) => {
+        const request = store.index('channelId').getAll(channelId);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    } catch (error) {
+      console.error('Error fetching channel data:', error);
+      return [];
+    }
+  }
+
   public static getInstance(): DatabaseManager {
     if (!DatabaseManager.instance) {
       DatabaseManager.instance = new DatabaseManager();
