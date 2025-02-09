@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { DatabaseManager } from '../db';
 
-export function DatabaseSettings() {
+export const DatabaseSettings: React.FC = () => {
   const [status, setStatus] = useState({ connected: false, error: '' });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -53,4 +53,4 @@ export function DatabaseSettings() {
       </div>
     </div>
   );
-}
+};
