@@ -1,0 +1,79 @@
+>
+
+Uncaught ReferenceError: MessageFormat is not defined
+
+at Dashboard (Dashboard.tsx:547:45)
+
+at renderWithHooks (react-dom.development.js:15486:18)
+
+at updateFunctionComponent (react-dom.development.js:19617:20)
+
+at at beginwork (react-dom.development.js:21640:16) HTMLUnknownElement.callCallback2 (react-dom.development.js:4164:14)
+
+Dashboard.tsx:547
+
+at Object.invokeGuardedCallbackDev (react-dom.development.js:4213:16)
+
+at invokeGuardedCallback (react-dom.development.js:4277:31)
+
+at beginWork$1 (react-dom,development.js:27490:7)
+
+at per formUnitOfWork (react-dom,development.is:26596:12) at workLoopSync (react-dom.development.js:26505:5)
+
+The above error occurred in the <Dashboard> component:
+
+react-dom.development.js:18704
+
+at Dashboard (https://11faecae-ab56-4569-8f30-9d7c3aee8e59-00-1m91csj7zsamm.sisko.rend it.dev/src/components/Dashboard.tsx:1000:45)
+
+at RenderedRoute (https://11faecae-ab56-4569-8f30-9d7c3aee8e59-00-1m91csj7zsqmm.sisko. replit.dev/node modules/.vite/deps/react-router-dom.js?v=5f6b34b3:4086:5)
+
+at Routes (https://11faecae-ab56-4569-8f30-9d7c3aee8e59-00-1m91csj7zsamm.sisko.replit. dev/node modules/.vite/deps/react-router-dom.js?v=5f6b34b3:4556:5)
+
+at Router (https://11faecae-ab56-4569-8f30-9d7c3aee8e59-00-1m91csj7zsamm.sisko.replit. dev/node modules/vite/deps/react-router-dom.js?v=5f6b34b3:4499:15)
+
+at Browser Router (https://11faecae-ab56-4569-8f30-9d7c3aee8e59-00-1m91cs3Zz5qmm.sisko. replit.dev/node modules/.vite/deps/react-router-dom.js?v=5f6b34b3:5245:5)
+
+at App (https://11faecae-ab56-4569-8f30-9d7c3aee8e59-00-1m91cs17zsgmm.sisko.replit.de v/src/App.tsx:25:44)
+
+Consider adding an error boundary to your tree to customize error handling behavior. Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+Uncaught ReferenceError: MessageFormat is not defined
+
+at Dashboard (Dashboard.tsx:547:45)
+
+at renderWithHooks (react-dom.development.js:15486:18)
+
+react-dom.development.js:26962
+
+at updateFunctionComponent (react-dom.development.is: 19617:20)
+
+at beginwork (react-dom.development.js:21640:16)
+
+at beginwork$1 (react-dom.development.js:27465:14)
+
+at performUnitOfWork (react-dom.development.js:26596:12)
+
+at workLoopSync (react-dom.development.js:26505:5)
+
+at render RootSync (react-dom.development.js:26473:7)
+
+at recoverFromConcurrentError (react-dom.development.js:25889:20)
+
+at performConcurrentwork0nRoot (react-dom,development.js:25789:22)
+
+Error checking database: DOMException: Failed to execute index' on Dashboard.tsx:468
+
+IDBObjectStore: The specified index was not found.
+
+at https://11faecae-ab56-4569-8130-9d7c3aee8e59-00-1m91csj7zsg@m.sisko.replit.dev/sr
+
+c/db/index.ts:21:31
+
+at new Promise (<anonymous>)
+
+at DatabaseManager.fetchChannelData (https://11faecae-ab56-4569-8f30-9d7c3aee8e59-00-
+
+1m91csj7zsqmm.sisko.replit.dev/src/db/index.ts:20:14) at async checkDatabaseAndData (https://11faecae-ab56-4569-8f30-9d7c3aee8e59-00-1m91cs
+
+j7zsqmm.sisko,replit.dev/src/components/Dashboard,tsx:1014:33)
