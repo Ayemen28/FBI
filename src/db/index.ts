@@ -55,6 +55,7 @@ export class DatabaseManager {
         if (!db.objectStoreNames.contains('bot_configs')) {
           const botConfigsStore = db.createObjectStore('bot_configs', { keyPath: 'id' });
           botConfigsStore.createIndex('created_at', 'created_at');
+          botConfigsStore.createIndex('is_active', 'is_active');
         }
 
         // Create messages store
@@ -62,12 +63,14 @@ export class DatabaseManager {
           const messagesStore = db.createObjectStore('messages', { keyPath: 'id' });
           messagesStore.createIndex('processed_at', 'processed_at');
           messagesStore.createIndex('status', 'status');
+          messagesStore.createIndex('channelId', 'channelId');
         }
 
         // Create users store
         if (!db.objectStoreNames.contains('users')) {
           const usersStore = db.createObjectStore('users', { keyPath: 'id' });
           usersStore.createIndex('email', 'email', { unique: true });
+          usersStore.createIndex('username', 'username');
         }
       };
 
