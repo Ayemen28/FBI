@@ -17,6 +17,21 @@ export interface BotConfig {
   antiSpam?: boolean;
   antiFlood?: boolean;
   maxWarnings?: number;
+  mediaScanEnabled?: boolean;
+  linkPreviewEnabled?: boolean;
+  userJoinRestriction?: 'none' | 'approval' | 'verification';
+  languageFilter?: boolean;
+  maxMessagesPerMinute?: number;
+  autoArchiveInactive?: boolean;
+}
+
+export interface RealtimeAlert {
+  id: string;
+  type: 'warning' | 'info' | 'error';
+  message: string;
+  timestamp: string;
+  userId?: number;
+  groupId?: string;
 }
 
 export interface UserActivity {

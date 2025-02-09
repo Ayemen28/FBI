@@ -31,8 +31,12 @@ const DashboardHome = ({ stats }: { stats: any }) => {
   const [messageStats, setMessageStats] = useState({
     media: 0,
     text: 0,
-    deleted: 0
+    deleted: 0,
+    links: 0,
+    stickers: 0,
+    voice: 0
   });
+  const [realtimeAlerts, setRealtimeAlerts] = useState([]);
 
   useEffect(() => {
     // هنا سيتم جلب البيانات من قاعدة البيانات
@@ -121,7 +125,15 @@ const DashboardHome = ({ stats }: { stats: any }) => {
 };
 
 const BotSettings = ({ botConfig }: { botConfig: any }) => {
-  const [settings, setSettings] = useState(botConfig);
+  const [settings, setSettings] = useState({
+    ...botConfig,
+    mediaScanEnabled: false,
+    linkPreviewEnabled: true,
+    userJoinRestriction: 'none',
+    languageFilter: false,
+    maxMessagesPerMinute: 20,
+    autoArchiveInactive: false
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
