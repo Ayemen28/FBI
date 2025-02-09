@@ -23,7 +23,7 @@ export class DatabaseManager {
     try {
       const store = await this.getStore('messages', 'readwrite');
       return new Promise((resolve, reject) => {
-        const request = store.index('channelId').getAll(channelId);
+        const request = store.index('channel_id').getAll(channelId);
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
       });
@@ -61,9 +61,9 @@ export class DatabaseManager {
         // Create messages store
         if (!db.objectStoreNames.contains('messages')) {
           const messagesStore = db.createObjectStore('messages', { keyPath: 'id' });
-          messagesStore.createIndex('processed_at', 'processed_at');
-          messagesStore.createIndex('status', 'status');
-          messagesStore.createIndex('channelId', 'channelId');
+          messagesStore.createIndex('processed_at', 'processed_at', { unique: false });
+          messagesStore.createIndex('status', 'status', { unique: false });
+          messagesStore.createIndex('channel_id', 'channel_id', { unique: false });
         }
 
         // Create users store
