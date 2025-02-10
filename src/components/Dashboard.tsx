@@ -447,10 +447,12 @@ const ActivityLog = () => {
 
 export function Dashboard() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [activeUsers, setActiveUsers] = useState(0);
   const { botConfig, messages, todayMessages, updateMessageStats } = useAppStore();
   const location = useLocation();
 
   const [dbStatus, setDbStatus] = useState({ connected: false, error: '' });
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const initializeServices = async () => {
