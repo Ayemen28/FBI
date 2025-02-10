@@ -29,7 +29,9 @@ export class BotService {
   public async getChatMembersCount(chatId: string): Promise<number> {
     try {
       if (!this.token) return 0;
-      const response = await fetch(`https://api.telegram.org/bot${this.token}/getChatMembersCount?chat_id=${chatId}`);
+      // Ensure chatId is properly formatted
+      const formattedChatId = chatId.startsWith('-100') ? chatId : `-100${chatId.replace(/[^0-9]/g, '')}`;
+      const response = await fetch(`https://api.telegram.org/bot${this.token}/getChatMembersCount?chat_id=${formattedChatId}`);
       const data = await response.json();
       return data.ok ? data.result : 0;
     } catch (error) {
@@ -41,7 +43,9 @@ export class BotService {
   public async getAdministrators(chatId: string): Promise<any[]> {
     try {
       if (!this.token) return [];
-      const response = await fetch(`https://api.telegram.org/bot${this.token}/getChatAdministrators?chat_id=${chatId}`);
+      // Ensure chatId is properly formatted
+      const formattedChatId = chatId.startsWith('-100') ? chatId : `-100${chatId.replace(/[^0-9]/g, '')}`;
+      const response = await fetch(`https://api.telegram.org/bot${this.token}/getChatAdministrators?chat_id=${formattedChatId}`);
       const data = await response.json();
       return data.ok ? data.result : [];
     } catch (error) {
