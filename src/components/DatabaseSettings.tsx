@@ -1,10 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { DatabaseManager } from '../db';
 import { Database, Table, Trash2, Edit2, Plus, Search, Download, Filter, Eye } from 'lucide-react';
 
 export interface DatabaseSettingsProps {}
-export const DatabaseSettings: React.FC<DatabaseSettingsProps> = () => {
 
 type TableInfo = {
   name: string;
@@ -14,7 +12,7 @@ type TableInfo = {
   }>;
 };
 
-export const DatabaseSettings: DatabaseSettings = () => {
+export const DatabaseSettings: React.FC<DatabaseSettingsProps> = () => {
   const [status, setStatus] = useState({ connected: false, error: '' });
   const [isLoading, setIsLoading] = useState(true);
   const [tables, setTables] = useState<TableInfo[]>([]);
@@ -138,7 +136,7 @@ export const DatabaseSettings: DatabaseSettings = () => {
     if (!sortField) return 0;
     const aVal = a[sortField];
     const bVal = b[sortField];
-    return sortDirection === 'asc' ? 
+    return sortDirection === 'asc' ?
       String(aVal).localeCompare(String(bVal)) :
       String(bVal).localeCompare(String(aVal));
   });
@@ -147,7 +145,7 @@ export const DatabaseSettings: DatabaseSettings = () => {
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="text-xl font-bold text-gray-800 mb-6">إعدادات قاعدة البيانات</h2>
-        
+
         {isLoading ? (
           <div className="flex items-center justify-center py-4">
             <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -171,8 +169,8 @@ export const DatabaseSettings: DatabaseSettings = () => {
                       key={table.name}
                       onClick={() => handleTableSelect(table.name)}
                       className={`cursor-pointer p-3 rounded transition-colors ${
-                        selectedTable === table.name 
-                          ? 'bg-blue-50 text-blue-700 border border-blue-200' 
+                        selectedTable === table.name
+                          ? 'bg-blue-50 text-blue-700 border border-blue-200'
                           : 'hover:bg-gray-50'
                       }`}
                     >
@@ -268,8 +266,8 @@ export const DatabaseSettings: DatabaseSettings = () => {
                           <thead className="bg-gray-50">
                             <tr>
                               {tables.find(t => t.name === selectedTable)?.columns.map(column => (
-                                <th 
-                                  key={column.name} 
+                                <th
+                                  key={column.name}
                                   className="text-right p-3 border-b cursor-pointer hover:bg-gray-100"
                                   onClick={() => handleSort(column.name)}
                                 >
