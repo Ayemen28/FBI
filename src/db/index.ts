@@ -100,6 +100,84 @@ export class DatabaseManager {
     return transaction.objectStore(storeName);
   }
 
+  public async addChannel(channel: Channel) {
+    const store = await this.getStore('channels', 'readwrite');
+    return new Promise((resolve, reject) => {
+      const request = store.put(channel);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  public async getChannel(channelId: string) {
+    const store = await this.getStore('channels');
+    return new Promise((resolve, reject) => {
+      const request = store.get(channelId);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  public async getAllChannels() {
+    const store = await this.getStore('channels');
+    return new Promise<Channel[]>((resolve, reject) => {
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  public async updateChannelSettings(channelId: string, settings: Partial<Channel>) {
+    const store = await this.getStore('channels', 'readwrite');
+    return new Promise((resolve, reject) => {
+      const request = store.get(channelId);
+      request.onsuccess = () => {
+        const channel = request.result;
+        if (channel) {
+          const updatedChannel = { ...channel, ...settings };
+          store.put(updatedChannel).onsuccess = () => resolve(true);
+        } else {
+          reject(new Error('Channel not found'));
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  public async addAutoResponse(channelId: string, response: AutoResponse) {
+    const store = await this.getStore('channels', 'readwrite');
+    return new Promise((resolve, reject) => {
+      const request = store.get(channelId);
+      request.onsuccess = () => {
+        const channel = request.result;
+        if (channel) {
+          channel.autoResponses = [...(channel.autoResponses || []), response];
+          store.put(channel).onsuccess = () => resolve(true);
+        } else {
+          reject(new Error('Channel not found'));
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  public async schedulePost(channelId: string, post: ScheduledPost) {
+    const store = await this.getStore('channels', 'readwrite');
+    return new Promise((resolve, reject) => {
+      const request = store.get(channelId);
+      request.onsuccess = () => {
+        const channel = request.result;
+        if (channel) {
+          channel.scheduledPosts = [...(channel.scheduledPosts || []), post];
+          store.put(channel).onsuccess = () => resolve(true);
+        } else {
+          reject(new Error('Channel not found'));
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   public async getBotConfig() {
     try {
       const store = await this.getStore('bot_configs');

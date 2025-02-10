@@ -1,15 +1,52 @@
+
 export interface InstallationState {
   step: number;
   isComplete: boolean;
   token?: string;
-  sourceGroup?: string;
-  targetGroup?: string;
+  channels?: Channel[];
+}
+
+export interface Channel {
+  id: string;
+  username: string;
+  title: string;
+  autoResponses: AutoResponse[];
+  rules: string[];
+  filters: ContentFilter[];
+  scheduledPosts: ScheduledPost[];
+  stats: ChannelStats;
+}
+
+export interface ContentFilter {
+  type: 'keyword' | 'regex' | 'ai';
+  pattern: string;
+  action: 'delete' | 'warn' | 'ban';
+}
+
+export interface AutoResponse {
+  trigger: string;
+  response: string;
+  isActive: boolean;
+}
+
+export interface ScheduledPost {
+  id: string;
+  content: string;
+  scheduledFor: string;
+  mediaUrl?: string;
+  status: 'pending' | 'posted' | 'failed';
+}
+
+export interface ChannelStats {
+  memberCount: number;
+  messageCount: number;
+  activeUsers: number;
+  topPosts: any[];
 }
 
 export interface BotConfig {
   token: string;
-  sourceGroup: string;
-  targetGroup: string;
+  channels: Channel[];
   isActive: boolean;
   welcomeMessage?: string;
   rulesMessage?: string;
@@ -31,7 +68,7 @@ export interface RealtimeAlert {
   message: string;
   timestamp: string;
   userId?: number;
-  groupId?: string;
+  channelId?: string;
 }
 
 export interface UserActivity {

@@ -26,6 +26,79 @@ export class BotService {
     }
   }
 
+  public async addChannel(username: string): Promise<Channel | null> {
+    try {
+      if (!this.token) return null;
+      const response = await fetch(`https://api.telegram.org/bot${this.token}/getChat?chat_id=@${username}`);
+      const data = await response.json();
+      
+      if (data.ok) {
+        const channel: Channel = {
+          id: data.result.id.toString(),
+          username: username,
+          title: data.result.title,
+          autoResponses: [],
+          rules: [],
+          filters: [],
+          scheduledPosts: [],
+          stats: {
+            memberCount: 0,
+            messageCount: 0,
+            activeUsers: 0,
+            topPosts: []
+          }
+        };
+        
+        const db = DatabaseManager.getInstance();
+        await db.addChannel(channel);
+        return channel;
+      }
+      return null;
+    } catch (error) {
+      console.error('Failed to add channel:', error);
+      return null;
+    }
+  }
+
+  public async sendMessage(channelId: string, text: string): Promise<boolean> {
+    try {
+      if (!this.token) return false;
+      const response = await fetch(`https://api.telegram.org/bot${this.token}/sendMessage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: channelId,
+          text: text,
+          parse_mode: 'HTML'
+        })
+      });
+      const data = await response.json();
+      return data.ok;
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      return false;
+    }
+  }
+
+  public async scheduleMessage(channelId: string, text: string, date: Date): Promise<boolean> {
+    try {
+      const db = DatabaseManager.getInstance();
+      const post: ScheduledPost = {
+        id: Date.now().toString(),
+        content: text,
+        scheduledFor: date.toISOString(),
+        status: 'pending'
+      };
+      await db.schedulePost(channelId, post);
+      return true;
+    } catch (error) {
+      console.error('Failed to schedule message:', error);
+      return false;
+    }
+  }
+
   public async getChatMembersCount(chatId: string): Promise<number> {
     try {
       if (!this.token) return 0;
