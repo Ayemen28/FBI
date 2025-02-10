@@ -1,3 +1,4 @@
+
 import type TelegramBot from 'node-telegram-bot-api';
 import { DatabaseManager } from '../db';
 
@@ -42,6 +43,12 @@ export class BotService {
       if (!this.token) return [];
       const response = await fetch(`https://api.telegram.org/bot${this.token}/getChatAdministrators?chat_id=${chatId}`);
       const data = await response.json();
+      return data.ok ? data.result : [];
+    } catch (error) {
+      console.error('Failed to get administrators:', error);
+      return [];
+    }
+  }
 
   public async fetchChannelMessages(chatId: string): Promise<any[]> {
     try {
@@ -76,13 +83,6 @@ export class BotService {
       return [];
     } catch (error) {
       console.error('Failed to fetch messages:', error);
-      return [];
-    }
-  }
-
-      return data.ok ? data.result : [];
-    } catch (error) {
-      console.error('Failed to get administrators:', error);
       return [];
     }
   }
