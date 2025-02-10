@@ -31,7 +31,7 @@ const StatsCard = ({ title, value, icon: Icon, trend }: any) => (
   </div>
 );
 
-const DashboardHome = ({ stats }: { stats: any }) => {
+const DashboardHome = ({ stats, botConfig }: { stats: any, botConfig: any }) => {
   const [activeUsers, setActiveUsers] = useState(0);
   const [messageStats, setMessageStats] = useState({
     media: 0,
@@ -598,7 +598,7 @@ export function Dashboard() {
       {/* Main Content */}
       <div className="flex-1 p-8">
         <Routes>
-          <Route path="/" element={<DashboardHome stats={stats} />} />
+          <Route path="/" element={<DashboardHome stats={stats} botConfig={botConfig} />} />
           <Route path="/settings" element={<BotSettings botConfig={botConfig} />} />
           <Route path="/database" element={<DatabaseSettings />} />
           <Route path="/messages" element={<MessageFormat />} />
