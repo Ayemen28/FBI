@@ -452,28 +452,61 @@ export function Dashboard() {
   const [dbStatus, setDbStatus] = useState({ connected: false, error: '' });
 
   useEffect(() => {
-    const checkDatabaseAndData = async () => {
+    const initializeServices = async () => {
       const db = DatabaseManager.getInstance();
+      const bot = BotService.getInstance();
+      
       try {
         const isConnected = await db.checkConnection();
         setDbStatus({ connected: isConnected, error: '' });
 
-        if (isConnected) {
-          const stats = await db.getMessageStats();
-          updateMessageStats(stats.total, stats.today);
+        if (isConnected && botConfig?.token) {
+          const isBotInitialized = await bot.initialize(botConfig.token);
+          
+          if (isBotInitialized) {
+            // Get initial stats
+            const stats = await db.getMessageStats();
+            updateMessageStats(stats.total, stats.today);
 
-          if (botConfig?.sourceGroup) {
-            const channelData = await db.fetchChannelData(botConfig.sourceGroup);
-            console.log('Channel data loaded:', channelData.length, 'messages');
+            // Get group members count
+            if (botConfig.sourceGroup) {
+              const membersCount = await bot.getChatMembersCount(botConfig.sourceGroup);
+              setActiveUsers(membersCount);
+
+              const channelData = await db.fetchChannelData(botConfig.sourceGroup);
+              console.log('Channel data loaded:', channelData.length, 'messages');
+              
+              // Get administrators
+              const admins = await bot.getAdministrators(botConfig.sourceGroup);
+              const adminUsers = admins.map(admin => ({
+                userId: admin.user.id,
+                username: admin.user.username || '',
+                firstName: admin.user.first_name,
+                lastName: admin.user.last_name || '',
+                isAdmin: true,
+                joinDate: new Date().toISOString(),
+                permissions: ['delete_messages', 'ban_users', 'pin_messages']
+              }));
+              setUsers(adminUsers);
+            }
           }
         }
       } catch (error) {
-        console.error('Error checking database:', error);
+        console.error('Error initializing services:', error);
         setDbStatus({ connected: false, error: error.message });
       }
     };
 
-    checkDatabaseAndData();
+    initializeServices();
+    
+    // Set up periodic stats update
+    const statsInterval = setInterval(async () => {
+      const db = DatabaseManager.getInstance();
+      const stats = await db.getMessageStats();
+      updateMessageStats(stats.total, stats.today);
+    }, 30000); // Update every 30 seconds
+
+    return () => clearInterval(statsInterval);
   }, [updateMessageStats, botConfig]);
 
   if (!dbStatus.connected) {

@@ -140,36 +140,85 @@ export class DatabaseManager {
     }
   }
 
+  public async saveMessage(message: {
+    source_message_id: number;
+    source_chat_id: string;
+    target_chat_id: string;
+    content: string;
+    status: string;
+  }) {
+    const store = await this.getStore('messages', 'readwrite');
+    return new Promise((resolve, reject) => {
+      const request = store.add({
+        ...message,
+        processed_at: new Date().toISOString()
+      });
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   public async getMessageStats() {
     try {
       const store = await this.getStore('messages');
-      return new Promise<{ total: number; today: number }>((resolve, reject) => {
-        const request = store.count();
-        request.onsuccess = () => {
-          const total = request.result;
-          const today = new Date().toISOString().split('T')[0];
-          
-          // Count today's messages
-          const index = store.index('processed_at');
-          const range = IDBKeyRange.bound(
-            today + 'T00:00:00.000Z',
-            today + 'T23:59:59.999Z'
-          );
-          
-          const todayRequest = index.count(range);
-          todayRequest.onsuccess = () => {
-            resolve({
-              total,
-              today: todayRequest.result
-            });
-          };
-          todayRequest.onerror = () => reject(todayRequest.error);
-        };
-        request.onerror = () => reject(request.error);
-      });
+      const total = await this.countMessages();
+      const today = await this.countTodayMessages();
+      const messageTypes = await this.getMessageTypeStats();
+      
+      return {
+        total,
+        today,
+        ...messageTypes
+      };
     } catch (error) {
       console.error('Error getting message stats:', error);
-      return { total: 0, today: 0 };
+      return {
+        total: 0,
+        today: 0,
+        media: 0,
+        text: 0,
+        deleted: 0
+      };
     }
+  }
+
+  private async countMessages(): Promise<number> {
+    const store = await this.getStore('messages');
+    return new Promise((resolve, reject) => {
+      const request = store.count();
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  private async countTodayMessages(): Promise<number> {
+    const store = await this.getStore('messages');
+    const today = new Date().toISOString().split('T')[0];
+    const index = store.index('processed_at');
+    const range = IDBKeyRange.bound(
+      today + 'T00:00:00.000Z',
+      today + 'T23:59:59.999Z'
+    );
+    
+    return new Promise((resolve, reject) => {
+      const request = index.count(range);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  private async getMessageTypeStats() {
+    const store = await this.getStore('messages');
+    const messages = await new Promise<any[]>((resolve, reject) => {
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+
+    return {
+      media: messages.filter(m => m.content.includes('media')).length,
+      text: messages.filter(m => !m.content.includes('media')).length,
+      deleted: messages.filter(m => m.status === 'deleted').length
+    };
   }
 }
