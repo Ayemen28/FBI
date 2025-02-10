@@ -20,7 +20,17 @@ export const useAppStore = create<AppStore>((set) => ({
   initializeStore: async () => {
     try {
       const db = DatabaseManager.getInstance();
+      const bot = BotService.getInstance();
       await db.checkConnection();
+      
+      if (await db.checkConnection()) {
+        const config = await db.getBotConfig();
+        if (config?.token) {
+          await bot.initialize(config.token);
+          if (config.sourceGroup) {
+            await bot.fetchChannelMessages(config.sourceGroup);
+          }
+        }
       
       const config = await db.getBotConfig();
       const stats = await db.getMessageStats();

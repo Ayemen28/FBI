@@ -44,14 +44,31 @@ const DashboardHome = ({ stats }: { stats: any }) => {
   const [realtimeAlerts, setRealtimeAlerts] = useState([]);
 
   useEffect(() => {
-    // هنا سيتم جلب البيانات من قاعدة البيانات
-    setActiveUsers(156);
-    setMessageStats({
-      media: 234,
-      text: 1893,
-      deleted: 23
-    });
-  }, []);
+    const fetchData = async () => {
+      const bot = BotService.getInstance();
+      const db = DatabaseManager.getInstance();
+      
+      if (botConfig?.sourceGroup) {
+        const messages = await bot.fetchChannelMessages(botConfig.sourceGroup);
+        const stats = await db.getMessageStats();
+        
+        setActiveUsers(await bot.getChatMembersCount(botConfig.sourceGroup));
+        setMessageStats({
+          media: stats.media || 0,
+          text: stats.text || 0,
+          deleted: stats.deleted || 0,
+          links: messages.filter(m => m.text?.includes('http')).length || 0,
+          stickers: messages.filter(m => m.type === 'sticker').length || 0,
+          voice: messages.filter(m => m.type === 'voice').length || 0
+        });
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 60000); // Update every minute
+    
+    return () => clearInterval(interval);
+  }, [botConfig]);
 
   return (
     <>
