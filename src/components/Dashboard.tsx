@@ -47,11 +47,11 @@ const DashboardHome = ({ stats, botConfig }: { stats: any, botConfig: any }) => 
     const fetchData = async () => {
       const bot = BotService.getInstance();
       const db = DatabaseManager.getInstance();
-      
+
       if (botConfig?.sourceGroup) {
         const messages = await bot.fetchChannelMessages(botConfig.sourceGroup);
         const stats = await db.getMessageStats();
-        
+
         setActiveUsers(await bot.getChatMembersCount(botConfig.sourceGroup));
         setMessageStats({
           media: stats.media || 0,
@@ -66,7 +66,7 @@ const DashboardHome = ({ stats, botConfig }: { stats: any, botConfig: any }) => 
 
     fetchData();
     const interval = setInterval(fetchData, 60000); // Update every minute
-    
+
     return () => clearInterval(interval);
   }, [botConfig]);
 
@@ -264,31 +264,57 @@ const BotSettings = ({ botConfig }: { botConfig: any }) => {
 const UserManagement = () => {
   const [users, setUsers] = useState<GroupMember[]>([]);
   const [activities, setActivities] = useState<UserActivity[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setIsLoading] = useState(true);
+  const [selectedRole, setSelectedRole] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newUser, setNewUser] = useState({
+    username: '',
+    role: 'moderator',
+    channelId: '',
+    permissions: [] as string[]
+  });
   const db = DatabaseManager.getInstance();
 
   useEffect(() => {
     loadUsers();
+    const interval = setInterval(loadUsers, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
   }, []);
 
   const loadUsers = async () => {
     try {
-      setLoading(true);
-      const loadedUsers = await db.getUsers();
-      setUsers(loadedUsers);
-      setActivities(loadedUsers.map(user => ({
+      setIsLoading(true);
+      const [loadedUsers, userActivities] = await Promise.all([
+        db.getUsers(),
+        db.fetchChannelData('all')
+      ]);
+
+      const enhancedUsers = loadedUsers.map(user => {
+        const userActivity = userActivities.filter(act => act.user_id === user.userId);
+        return {
+          ...user,
+          messageCount: userActivity.length,
+          lastActive: userActivity.length > 0 ? 
+            userActivity[userActivity.length - 1].timestamp : 
+            user.joinDate
+        };
+      });
+
+      setUsers(enhancedUsers);
+      setActivities(enhancedUsers.map(user => ({
         userId: user.userId,
         username: user.username,
-        messageCount: 0,
-        lastActive: new Date().toISOString(),
-        warnings: 0,
+        messageCount: user.messageCount || 0,
+        lastActive: user.lastActive,
+        warnings: user.warnings || 0,
         status: user.status || 'active',
         joinDate: user.joinDate
       })));
     } catch (error) {
       console.error('Error loading users:', error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -520,7 +546,7 @@ export function Dashboard() {
     const initializeServices = async () => {
       const db = DatabaseManager.getInstance();
       const bot = BotService.getInstance();
-      
+
       try {
         const isConnected = await db.checkConnection();
         setDbStatus({ connected: isConnected, error: '' });
@@ -528,7 +554,7 @@ export function Dashboard() {
         const config = await db.getBotConfig();
         if (isConnected && config?.token) {
           const isBotInitialized = await bot.initialize(config.token);
-          
+
           if (isBotInitialized) {
             // Get initial stats
             const stats = await db.getMessageStats();
@@ -541,7 +567,7 @@ export function Dashboard() {
 
               const channelData = await db.fetchChannelData(botConfig.sourceGroup);
               console.log('Channel data loaded:', channelData.length, 'messages');
-              
+
               // Get administrators
               const admins = await bot.getAdministrators(botConfig.sourceGroup);
               const adminUsers = admins.map(admin => ({
@@ -564,7 +590,7 @@ export function Dashboard() {
     };
 
     initializeServices();
-    
+
     // Set up periodic stats update
     const statsInterval = setInterval(async () => {
       const db = DatabaseManager.getInstance();
