@@ -1,18 +1,19 @@
+
 import React, { useState, useEffect } from 'react';
 import { DatabaseManager } from '../db';
 import { Database, Table, Trash2, Edit2, Plus, Search, Download, Filter, Eye } from 'lucide-react';
 
-export interface DatabaseSettingsProps {}
-
-type TableInfo = {
+interface TableColumn {
   name: string;
-  columns: Array<{
-    name: string;
-    type: string;
-  }>;
-};
+  type: string;
+}
 
-export const DatabaseSettings: React.FC<DatabaseSettingsProps> = () => {
+interface TableInfo {
+  name: string;
+  columns: TableColumn[];
+}
+
+export const DatabaseSettings: React.FC = () => {
   const [status, setStatus] = useState({ connected: false, error: '' });
   const [isLoading, setIsLoading] = useState(true);
   const [tables, setTables] = useState<TableInfo[]>([]);
@@ -50,7 +51,6 @@ export const DatabaseSettings: React.FC<DatabaseSettingsProps> = () => {
   };
 
   const loadTables = async () => {
-    const db = DatabaseManager.getInstance();
     const tables: TableInfo[] = [
       {
         name: 'bot_configs',
@@ -104,7 +104,6 @@ export const DatabaseSettings: React.FC<DatabaseSettingsProps> = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('هل أنت متأكد من حذف هذا السجل؟')) {
       console.log('Deleting record:', id);
-      // Implementation for delete operation
     }
   };
 
