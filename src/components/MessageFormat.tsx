@@ -1,7 +1,8 @@
 
 import React from 'react';
 
-export const MessageFormat: React.FC = () => {
+export type MessageFormat = React.FC;
+export const MessageFormat: MessageFormat = () => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <h2 className="text-xl font-bold text-gray-800 mb-6">تنسيق الرسائل</h2>

@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { DatabaseManager } from '../db';
 
-export const DatabaseSettings: React.FC = () => {
+export type DatabaseSettings = React.FC;
+export const DatabaseSettings: DatabaseSettings = () => {
   const [status, setStatus] = useState({ connected: false, error: '' });
   const [isLoading, setIsLoading] = useState(true);
 

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import { DatabaseSettings } from './DatabaseSettings';
 import { MessageFormat } from './MessageFormat';
+import type { DatabaseSettings as DatabaseSettingsType } from './DatabaseSettings';
+import type { MessageFormat as MessageFormatType } from './MessageFormat';
 import { 
   Settings, MessageSquare, Database, Layout, Users, FileText, Bell, Menu, X,
   BarChart2, Shield, UserPlus, Trash2, AlertTriangle, MessageCircle
