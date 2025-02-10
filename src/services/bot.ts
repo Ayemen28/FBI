@@ -1,10 +1,9 @@
-
-import TelegramBot from 'node-telegram-bot-api';
+import type TelegramBot from 'node-telegram-bot-api';
 import { DatabaseManager } from '../db';
 
 export class BotService {
   private static instance: BotService;
-  private bot: TelegramBot | null = null;
+  private token: string | null = null;
 
   private constructor() {}
 
@@ -17,8 +16,7 @@ export class BotService {
 
   public async initialize(token: string): Promise<boolean> {
     try {
-      this.bot = new TelegramBot(token, { polling: true });
-      this.setupEventListeners();
+      this.token = token;
       return true;
     } catch (error) {
       console.error('Failed to initialize bot:', error);
@@ -26,44 +24,24 @@ export class BotService {
     }
   }
 
-  private setupEventListeners() {
-    if (!this.bot) return;
-
-    this.bot.on('message', async (msg) => {
-      const db = DatabaseManager.getInstance();
-      await db.saveMessage({
-        source_message_id: msg.message_id,
-        source_chat_id: String(msg.chat.id),
-        target_chat_id: '',
-        content: msg.text || '',
-        status: 'received'
-      });
-    });
-
-    this.bot.on('edited_message', async (msg) => {
-      // Handle edited messages
-    });
-
-    this.bot.on('delete_message', async (msg) => {
-      // Handle deleted messages
-    });
-  }
-
   public async getChatMembersCount(chatId: string): Promise<number> {
     try {
-      if (!this.bot) return 0;
-      const count = await this.bot.getChatMembersCount(chatId);
-      return count;
+      if (!this.token) return 0;
+      const response = await fetch(`https://api.telegram.org/bot${this.token}/getChatMembersCount?chat_id=${chatId}`);
+      const data = await response.json();
+      return data.ok ? data.result : 0;
     } catch (error) {
       console.error('Failed to get members count:', error);
       return 0;
     }
   }
 
-  public async getAdministrators(chatId: string): Promise<TelegramBot.ChatMember[]> {
+  public async getAdministrators(chatId: string): Promise<any[]> {
     try {
-      if (!this.bot) return [];
-      return await this.bot.getChatAdministrators(chatId);
+      if (!this.token) return [];
+      const response = await fetch(`https://api.telegram.org/bot${this.token}/getChatAdministrators?chat_id=${chatId}`);
+      const data = await response.json();
+      return data.ok ? data.result : [];
     } catch (error) {
       console.error('Failed to get administrators:', error);
       return [];
