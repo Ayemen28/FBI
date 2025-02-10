@@ -1,0 +1,103 @@
+Uncaught ReferenceError: botContig is not defined
+
+at DashboardHone (Dashboard.sx 71 7
+
+at renderwithHooks (Chunk-717721KX.js?v=... sourcemap:11548:26)
+
+Dashboard.tsx:71
+
+at mount IndeterminateComponent (chunk-717121KK.js?v=sourcemas:14926-21)
+
+at beginWork (chunk-71712IKX. 157v sourcemap 15914:22)
+
+at HTMLUnknownElement.callcallback2 (chunk-717121KX, 157V-d:sourcemap: 3674:22)
+
+at. Object.invokeGuardedCallbackDev (chunk-717721KX.157vm.d:sourcemap:3699:24)
+
+at invokeGuardedCallback (chunk 71712188.337vd sour.comap:3753:59)
+
+at beginWork$3 (chunk-717121KX.js?v=sourcemap: 19765:15) at performunitofwork (chunk-717121KX.is?ysourcemae 19198.201
+
+at workLoopsync (chunk-717721XX.JS?v=sourceпар: 19137:13)
+
+The above error occurred in the
+
+<DashboardHone> component:
+
+chunk 717121KX, 157v=94d: sourcemap: 14032
+
+at DashboardHome (https://an635d57-4226-480h-ac38-8dd5a2151a1c-00-26vavvbc6nzqd.pike.r
+
+split.dev/src/comments/Dashboard.tax:82:20)
+
+at RenderedRoute (https://ab635d57-d226-480b-ac38-8dd5a2f61a1c-00-20vavvbconzgd.oike.c
+
+eplit.dev/node modules/vite/deps/react-router-dom.157V-1909ca40:4088:2) at Routes (bitps://ab635457-226-480h-ac38-8dd5a2f61a1c-00-21vxvvbconand.pike.reolit.d
+
+ev/node modules/vite/deps/react-router-dom.152v-1969c94d: 45585) at div
+
+at div
+
+1.dev/src/components/Dashboard.tsx: 1016:45)
+
+at Dashboard (https://ab035d57-d225-450b-ac38-B0d5a2f61alc-00-26vavvbc6nzgd.pike.repli
+
+at RenderedRoute (https://ab635d37-2226-480-ac38-8dd5a2f51a1c-00-20ve/bconzgd.oike.r
+
+eplit.dev/node modules/vite/deps/react-router-dom, is7v=1969c940:40885)
+
+at Routes (https://ab633057-d220-480b-ac38-Bdd5a2f6l0lc-00-26vavvisonzed.pake.realit.d
+
+ev/node modules/vite/deps/react-router-dom.js?v-1969c94d:4550:5) at Router (hstos.//ab635057-0226-4800-ac38-add5a2f61a1c-00-26vayybcenzad.pike.reolit.d
+
+ev/node modules/vite/deps/reart-router-dom.js?v=1969c94d:4501:15)
+
+at BrowserRouter (https://ab635d37-6226-480b-ac38-8dd5a2f61a1c-00-26vavvbconzod.eike.r
+
+eplit.dev/node modules/vite/deps/react-router-dom.357v-1909c940:5247.3)
+
+at App (https://ab635d57-0226-480b-ac38-8dd5a2f61atc-00-26vavvbconzod.pike.replit.dev/
+
+src/App.sx:25:44)
+
+Consider adding an error boundary to your tree to customize error handling behavior. Visit NEEDS://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+LogCaptured Error chuni-717721KX.387v=94d; sourcemap: 14032
+
+Uncaught ReferenceError: hotconfig is not defined
+
+chunk-717121KX.js?v=.94d:sourcesap. 19413
+
+at DashboardHome (Dashboard.tax:71:7) at renderwithhooks (chunk-717727KX.157V
+
+sourcemap: 11540:26) sourcemap 14926-21) at mountindeterminateComponent (chunk-717121KX,357
+
+at begiriwork (chunk-717721KX.js2y= sourcemap: 15914:22)
+
+at beginwork$1 (chunk-717IZIKX.js?v=sourcoman: 19753:22)
+
+at per forntinitOfwork (chunk-717121KX.157vs sourcemap:19198:20)
+
+at workLoopSync (chunk-717121KX.js?v-sourceman:19137:13)
+
+at renderRootsync (chunk-717721KX,J57v sourcemap: 19116:15)
+
+at recoverFromConcurrentError (chunk-71772IXX, 152V sourcemap: 18736:28)
+
+at perforaconcurrent workönRoot (chunk-717121KX.js7v sourcemap:18684:30)
+
+Failed to load resource: the server responded api.telegram.org/bot...id=-1002187695362:1
+
+with a status of 400 ()
+
+Failed to Inad resource: the server responded api.telegram.org/hot.id=-1002197695362:1
+
+with a status of 400 ()
+
+Failed to load resource the server responded api telegram.org/bot Lu-1002187693362:1
+
+with a status of 400 ()
+
+Failed to load resource the server responded api telegram.org/bot. 10--100218769336211
+
+with a status of 400 ()
