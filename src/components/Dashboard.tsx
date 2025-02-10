@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '../store';
 import { DatabaseManager } from '../db';
+import { BotService } from '../services/bot';
 import type { UserActivity, GroupMember } from '../types';
 
 // مكون الإحصائيات المتقدمة
