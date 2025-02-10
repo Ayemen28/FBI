@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { DatabaseManager } from '../db';
 import { Database, Table, Trash2, Edit2, Plus, Search, Download, Filter, Eye } from 'lucide-react';
 
-export type DatabaseSettings = React.FC;
+export interface DatabaseSettingsProps {}
+export const DatabaseSettings: React.FC<DatabaseSettingsProps> = () => {
 
 type TableInfo = {
   name: string;
