@@ -480,8 +480,9 @@ export function Dashboard() {
         const isConnected = await db.checkConnection();
         setDbStatus({ connected: isConnected, error: '' });
 
-        if (isConnected && botConfig?.token) {
-          const isBotInitialized = await bot.initialize(botConfig.token);
+        const config = await db.getBotConfig();
+        if (isConnected && config?.token) {
+          const isBotInitialized = await bot.initialize(config.token);
           
           if (isBotInitialized) {
             // Get initial stats
@@ -489,8 +490,8 @@ export function Dashboard() {
             updateMessageStats(stats.total, stats.today);
 
             // Get group members count
-            if (botConfig.sourceGroup) {
-              const membersCount = await bot.getChatMembersCount(botConfig.sourceGroup);
+            if (config.sourceGroup) {
+              const membersCount = await bot.getChatMembersCount(config.sourceGroup);
               setActiveUsers(membersCount);
 
               const channelData = await db.fetchChannelData(botConfig.sourceGroup);
