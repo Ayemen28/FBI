@@ -1,6 +1,8 @@
+
 import { create } from 'zustand';
 import { AppState, BotConfig } from '../types';
 import { DatabaseManager } from '../db';
+import { BotService } from '../services/bot';
 
 interface AppStore extends AppState {
   setInstalled: (value: boolean) => void;
@@ -23,16 +25,14 @@ export const useAppStore = create<AppStore>((set) => ({
       const bot = BotService.getInstance();
       await db.checkConnection();
       
-      if (await db.checkConnection()) {
-        const config = await db.getBotConfig();
-        if (config?.token) {
-          await bot.initialize(config.token);
-          if (config.sourceGroup) {
-            await bot.fetchChannelMessages(config.sourceGroup);
-          }
-        }
-      
       const config = await db.getBotConfig();
+      if (config?.token) {
+        await bot.initialize(config.token);
+        if (config.sourceGroup) {
+          await bot.fetchChannelMessages(config.sourceGroup);
+        }
+      }
+      
       const stats = await db.getMessageStats();
       
       set({
