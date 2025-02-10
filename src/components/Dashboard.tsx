@@ -262,31 +262,63 @@ const BotSettings = ({ botConfig }: { botConfig: any }) => {
 };
 
 const UserManagement = () => {
-  const [users, setUsers] = useState<GroupMember[]>([
-    {
-      userId: 1,
-      username: "ahmad",
-      firstName: "أحمد",
-      lastName: "محمد",
-      isAdmin: true,
-      joinDate: "2024-02-01",
-      permissions: ["delete_messages", "ban_users", "pin_messages"]
-    },
-    // المزيد من المستخدمين...
-  ]);
+  const [users, setUsers] = useState<GroupMember[]>([]);
+  const [activities, setActivities] = useState<UserActivity[]>([]);
+  const [loading, setLoading] = useState(true);
+  const db = DatabaseManager.getInstance();
 
-  const [activities, setActivities] = useState<UserActivity[]>([
-    {
-      userId: 1,
-      username: "ahmad",
-      messageCount: 150,
-      lastActive: "2024-02-06T15:30:00",
-      warnings: 0,
-      status: "active",
-      joinDate: "2024-02-01"
-    },
-    // المزيد من النشاطات...
-  ]);
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+      const loadedUsers = await db.getUsers();
+      setUsers(loadedUsers);
+      setActivities(loadedUsers.map(user => ({
+        userId: user.userId,
+        username: user.username,
+        messageCount: 0,
+        lastActive: new Date().toISOString(),
+        warnings: 0,
+        status: user.status || 'active',
+        joinDate: user.joinDate
+      })));
+    } catch (error) {
+      console.error('Error loading users:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteUser = async (userId: number) => {
+    if (window.confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+      try {
+        await db.deleteUser(userId);
+        await loadUsers();
+      } catch (error) {
+        console.error('Error deleting user:', error);
+      }
+    }
+  };
+
+  const handleUpdateStatus = async (userId: number, status: string) => {
+    try {
+      await db.updateUserStatus(userId, status);
+      await loadUsers();
+    } catch (error) {
+      console.error('Error updating user status:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -399,8 +431,21 @@ const UserManagement = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
-                    <button className="text-yellow-600 hover:text-yellow-900">تحذير</button>
-                    <button className="text-red-600 hover:text-red-900 mr-4">حظر</button>
+                    <button 
+                      onClick={() => handleUpdateStatus(activity.userId, 'warning')}
+                      className="text-yellow-600 hover:text-yellow-900">
+                      تحذير
+                    </button>
+                    <button 
+                      onClick={() => handleUpdateStatus(activity.userId, 'banned')}
+                      className="text-red-600 hover:text-red-900 mr-4">
+                      حظر
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteUser(activity.userId)}
+                      className="text-gray-600 hover:text-gray-900 mr-4">
+                      حذف
+                    </button>
                   </td>
                 </tr>
               ))}

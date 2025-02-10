@@ -221,4 +221,56 @@ export class DatabaseManager {
       deleted: messages.filter(m => m.status === 'deleted').length
     };
   }
+
+  public async saveUser(user: {
+    userId: number;
+    username: string;
+    firstName: string;
+    lastName: string;
+    isAdmin: boolean;
+    permissions: string[];
+    joinDate: string;
+  }) {
+    const store = await this.getStore('users', 'readwrite');
+    return new Promise((resolve, reject) => {
+      const request = store.put(user);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  public async getUsers() {
+    const store = await this.getStore('users');
+    return new Promise<any[]>((resolve, reject) => {
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  public async updateUserStatus(userId: number, status: string) {
+    const store = await this.getStore('users', 'readwrite');
+    return new Promise((resolve, reject) => {
+      const request = store.get(userId);
+      request.onsuccess = () => {
+        const user = request.result;
+        if (user) {
+          user.status = status;
+          store.put(user).onsuccess = () => resolve(true);
+        } else {
+          reject(new Error('User not found'));
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  public async deleteUser(userId: number) {
+    const store = await this.getStore('users', 'readwrite');
+    return new Promise((resolve, reject) => {
+      const request = store.delete(userId);
+      request.onsuccess = () => resolve(true);
+      request.onerror = () => reject(request.error);
+    });
+  }
 }
